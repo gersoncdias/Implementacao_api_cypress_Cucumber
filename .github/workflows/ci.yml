@@ -1,0 +1,31 @@
+name: Cypress CI
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: npm install --force
+
+      - name: Run Cypress tests
+        run: npx cypress run
+
+      - name: Generate Allure report
+        run: |
+          npx allure generate --clean
+          mv allure-report $GITHUB_WORKSPACE/allure-report
+
+      - name: Publish Allure report
+        uses: actions/upload-artifact@v2
+        with:
+          name: allure-report
+          path: $GITHUB_WORKSPACE/allure-report
